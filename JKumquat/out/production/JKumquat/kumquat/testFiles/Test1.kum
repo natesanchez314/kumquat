@@ -1,9 +1,0 @@
-class Test1 {
-    fun main() {
-        var x = 0
-    }
-
-    fun exampleMethod(x, y) {
-        var z = x + y
-    }
-}
