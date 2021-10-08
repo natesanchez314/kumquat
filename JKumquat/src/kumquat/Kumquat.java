@@ -42,15 +42,24 @@ public class Kumquat {
   private static void run(String source) {
     KumquatScanner scanner = new KumquatScanner(source);
     List<Token> tokens = scanner.scanTokens();
-    // For now, just print the tokens.
-    for (Token token : tokens) {
-      System.out.println(token);
-    }
+    // for (Token token : tokens) { System.out.println(token); }
+    KumquatParser parser = new KumquatParser(tokens);
+    Expr expression = parser.parse();
+    if (hadError) return;
+    System.out.println(new AstPrinter().print(expression));
   }
 
   static void error(int line, String message) {
     report(line, "", message);
     hadError = true;
+  }
+
+  static void error(Token token, String message) {
+    if (token.type == TokenType.EOF) {
+      report(token.line, " at end", message);
+    } else {
+      report(token.line, " at '" + token.lexeme + "'", message);
+    }
   }
 
   private static void report(int line, String where, String message) {
