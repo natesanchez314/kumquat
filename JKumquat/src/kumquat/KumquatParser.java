@@ -82,7 +82,7 @@ public class KumquatParser {
   private Expr primary() {
     if (match(TokenType.FALSE)) return new Expr.Literal(false);
     if (match(TokenType.TRUE)) return new Expr.Literal(true);
-    if (match(TokenType.NIL)) return new Expr.Literal(null);
+    if (match(TokenType.NONE)) return new Expr.Literal(null);
     if (match(TokenType.NUMBER, TokenType.STRING)) {
       return new Expr.Literal(previous().literal);
     }
@@ -142,8 +142,10 @@ public class KumquatParser {
       if(previous().type == TokenType.SEMICOLON) return;
       switch (peek().type) {
         case CLASS:
+        case OBJECT:
         case FUN:
         case VAR:
+        case CONST:
         case FOR:
         case IF:
         case WHILE:
