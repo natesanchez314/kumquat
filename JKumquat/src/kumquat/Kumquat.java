@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Kumquat {
 
-  private static final KumquatInterpreter interpreter = new KumquatInterpreter();
+  private static final Interpreter interpreter = new Interpreter();
   static boolean hadError = false;
   static boolean hadRuntimeError = false;
 
@@ -44,13 +44,15 @@ public class Kumquat {
   }
 
   private static void run(String source) {
-    KumquatScanner scanner = new KumquatScanner(source);
+    KScanner scanner = new KScanner(source);
     List<Token> tokens = scanner.scanTokens();
     // for (Token token : tokens) { System.out.println(token); }
-    KumquatParser parser = new KumquatParser(tokens);
-    Expr expression = parser.parse();
+    Parser parser = new Parser(tokens);
+    List<Stmt> statements = parser.parse();
+    //Expr expression = parser.parse();
     if (hadError) return;
-    interpreter.interpret(expression);
+    interpreter.interpret(statements);
+    //interpreter.interpret(expression);
     //System.out.println(new AstPrinter().print(expression));
   }
 

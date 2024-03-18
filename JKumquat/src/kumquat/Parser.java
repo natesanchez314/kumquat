@@ -1,24 +1,62 @@
 package kumquat;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class KumquatParser {
+public class Parser {
 
   private static class ParseError extends RuntimeException {}
 
   private final List<Token> tokens;
   private int current = 0;
 
-  KumquatParser(List<Token> tokens) {
+  Parser(List<Token> tokens) {
     this.tokens = tokens;
   }
 
-  Expr parse() {
+  List<Stmt> parse() {
+    List<Stmt> statements = new ArrayList<>();
+    while (!isAtEnd()) {
+      statements.add(declaration());
+    }
+    return statements;
+  }
+
+  private Stmt varDeclaration() {
+    Token name = consume(TokenType.IDENTIFIER, "Expect variable name.");
+    Expr intitializer = null;
+    if (match(TokenType.EQUAL)) {
+      intitializer = expression();
+    }
+    consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
+    return new Stmt.Var(name, intitializer);
+  }
+
+  private Stmt declaration() {
     try {
-      return expression();
-    } catch (ParseError err) {
+      if (match(TokenType.VAR)) return varDeclaration();
+      return statement();
+    } catch (ParseError error) {
+      synchronize();
       return null;
     }
+  }
+
+  private Stmt statement() {
+    if (match(TokenType.PRINT)) return printStatement();
+    return expressionStatement();
+  }
+
+  private Stmt printStatement() {
+    Expr value = expression();
+    consume(TokenType.SEMICOLON, "Expect ';' after value.");
+    return new Stmt.Print(value);
+  }
+
+  private Stmt expressionStatement() {
+    Expr expr = expression();
+    consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+    return new Stmt.Expression(expr);
   }
 
   private Expr expression() {
@@ -85,6 +123,9 @@ public class KumquatParser {
     if (match(TokenType.NONE)) return new Expr.Literal(null);
     if (match(TokenType.NUMBER, TokenType.STRING)) {
       return new Expr.Literal(previous().literal);
+    }
+    if (match(TokenType.IDENTIFIER)) {
+      return new Expr.Variable(previous());
     }
     if (match(TokenType.LEFT_PAREN)) {
       Expr expr = expression();

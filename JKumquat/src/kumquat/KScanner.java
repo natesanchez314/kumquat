@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class KumquatScanner {
+class KScanner {
   private final String source;
   private final List<Token> tokens = new ArrayList<>();
   private int start = 0;
@@ -36,7 +36,7 @@ class KumquatScanner {
     keywords.put("case",   TokenType.CASE);
   }
 
-  KumquatScanner (String source) {
+  KScanner(String source) {
     this.source = source;
   }
 

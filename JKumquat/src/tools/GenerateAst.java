@@ -14,11 +14,17 @@ public class GenerateAst {
     }
       String outputDir = args[0];
       defineAst(outputDir, "Expr", Arrays.asList(
-      "Binary   : Expr left, Token operator, Expr right",
-      "Grouping : Expr expression",
-      "Literal  : Object value",
-      "Unary    : Token operator, Expr right"
-    ));
+          "Binary   : Expr left, Token operator, Expr right",
+          "Grouping : Expr expression",
+          "Literal  : Object value",
+          "Unary    : Token operator, Expr right",
+          "Variable : Token name"
+      ));
+      defineAst(outputDir, "Stmt", Arrays.asList(
+          "Expression : Expr expression",
+          "Print      : Expr expression",
+          "Var        : Token name, Expr initializer"
+      ));
   }
 
   private static void defineAst(String outputDir, String baseName, List<String> types) throws IOException {
@@ -27,7 +33,7 @@ public class GenerateAst {
 
     writer.println("package kumquat;");
     writer.println();
-    writer.println("import java.util.List");
+    writer.println("import java.util.List;");
     writer.println();
     writer.println("abstract class " + baseName + " {");
 
@@ -74,5 +80,6 @@ public class GenerateAst {
       String typeName = type.split(":")[0].trim();
       writer.println("    R visit" + typeName + baseName + "(" + typeName + " " + baseName.toLowerCase() + ");");
     }
+    writer.println("  }");
   }
 }
