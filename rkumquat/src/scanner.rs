@@ -22,6 +22,7 @@ impl Scanner {
     }
 
     pub fn scan_tokens(&mut self) -> &Vec<Token> {
+        println!("Source: {:?}", self.source);
         while !self.is_at_end() {
             self.start = self.current;
             self.scan_token();
@@ -48,8 +49,10 @@ impl Scanner {
     }
 
     fn advance(&mut self) -> char {
+        let c = self.source.chars().nth(self.current).unwrap();
         self.current += 1;
-        self.source.chars().nth(self.current).unwrap()
+        println!("{}", c);
+        c
     }
 
     fn add_token_helper(&mut self, token_type: TokenType) {
