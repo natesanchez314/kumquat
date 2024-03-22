@@ -46,14 +46,13 @@ public class Kumquat {
   private static void run(String source) {
     KScanner scanner = new KScanner(source);
     List<Token> tokens = scanner.scanTokens();
-    // for (Token token : tokens) { System.out.println(token); }
     Parser parser = new Parser(tokens);
     List<Stmt> statements = parser.parse();
-    //Expr expression = parser.parse();
+    if (hadError) return;
+    Resolver resolver = new Resolver(interpreter);
+    resolver.resolve(statements);
     if (hadError) return;
     interpreter.interpret(statements);
-    //interpreter.interpret(expression);
-    //System.out.println(new AstPrinter().print(expression));
   }
 
   static void error(int line, String message) {

@@ -3,8 +3,11 @@ package kumquat;
 import java.util.List;
 public class KumquatFunction implements KumquatCallable {
   private final Stmt.Function declaration;
-  KumquatFunction(Stmt.Function declaration) {
+  private final Environment closure;
+
+  KumquatFunction(Stmt.Function declaration, Environment closure) {
     this.declaration = declaration;
+    this.closure = closure;
   }
 
   @Override
@@ -14,11 +17,15 @@ public class KumquatFunction implements KumquatCallable {
 
   @Override
   public Object call(Interpreter interpreter, List<Object> arguments) {
-    Environment environment = new Environment(interpreter.globals);
+    Environment environment = new Environment(closure);
     for (int i = 0; i < declaration.params.size(); i++) {
       environment.define(declaration.params.get(i).lexeme, arguments.get(i));
     }
-    interpreter.executeBlock(declaration.body, environment);
+    try {
+      interpreter.executeBlock(declaration.body, environment);
+    } catch (Return returnValue) {
+      return returnValue.value;
+    }
     return null;
   }
 
