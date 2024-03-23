@@ -1,5 +1,11 @@
-fun sayHi(first, last) {
-    print "Hi, " + first + " " + last + "!";
+class Thing {
+    getCallback() {
+        fun localFunction() {
+            print this;
+        }
+        return localFunction;
+    }
 }
 
-sayHi("Dear", "Reader");
+var callback = Thing().getCallback();
+callback();

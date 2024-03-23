@@ -2,12 +2,20 @@ package kumquat;
 
 import java.util.List;
 public class KumquatFunction implements KumquatCallable {
+  private final boolean isInitializer;
   private final Stmt.Function declaration;
   private final Environment closure;
 
-  KumquatFunction(Stmt.Function declaration, Environment closure) {
+  KumquatFunction(Stmt.Function declaration, Environment closure, boolean isInitializer) {
+    this.isInitializer = isInitializer;
     this.declaration = declaration;
     this.closure = closure;
+  }
+
+  KumquatFunction bind(KumquatInstance instance) {
+    Environment environment = new Environment(closure);
+    environment.define("this", instance);
+    return new KumquatFunction(declaration, environment, isInitializer);
   }
 
   @Override
@@ -24,8 +32,10 @@ public class KumquatFunction implements KumquatCallable {
     try {
       interpreter.executeBlock(declaration.body, environment);
     } catch (Return returnValue) {
+      if (isInitializer) return closure.getAt(0, "this");
       return returnValue.value;
     }
+    if (isInitializer) return closure.getAt(0, "this");
     return null;
   }
 
