@@ -5,10 +5,12 @@ import java.util.Map;
 
 public class KumquatClass implements KumquatCallable{
   final String name;
+  final KumquatClass superClass;
   private final Map<String, KumquatFunction> methods;
 
-  KumquatClass(String name, Map<String, KumquatFunction> methods) {
+  KumquatClass(String name, KumquatClass superClass, Map<String, KumquatFunction> methods) {
     this.name = name;
+    this.superClass = superClass;
     this.methods = methods;
   }
 
@@ -37,6 +39,9 @@ public class KumquatClass implements KumquatCallable{
   KumquatFunction findMethod(String name) {
     if (methods.containsKey(name)) {
       return methods.get(name);
+    }
+    if (superClass != null) {
+      return superClass.findMethod(name);
     }
     return null;
   }

@@ -66,6 +66,7 @@ class KScanner {
       case '.' -> addToken(TokenType.DOT);
       case '-' -> addToken(TokenType.MINUS);
       case '+' -> addToken(TokenType.PLUS);
+      case ':' -> addToken(TokenType.COLON);
       case ';' -> addToken(TokenType.SEMICOLON);
       case '*' -> addToken(TokenType.STAR);
       // One or two character tokens

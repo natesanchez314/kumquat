@@ -16,7 +16,8 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
   private enum ClassType {
     NONE,
-    CLASS
+    CLASS,
+    SUBCLASS,
   }
 
   private final Interpreter interpreter;
@@ -141,6 +142,17 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
   }
 
   @Override
+  public Void visitSuperExpr(Expr.Super expr) {
+    if (currentClass == ClassType.NONE) {
+      Kumquat.error(expr.keyword, "Can't use 'super' outside of a class.");
+    } else if (currentClass != ClassType.SUBCLASS) {
+      Kumquat.error(expr.keyword, "Can't use 'super' in a class no superclass.");
+    }
+    resolveLocal(expr, expr.keyword);
+    return null;
+  }
+
+  @Override
   public Void visitThisExpr(Expr.This expr) {
     if (currentClass == ClassType.NONE) {
       Kumquat.error(expr.keyword, "Can't use 'this' outside of a class.");
@@ -179,6 +191,15 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     currentClass = ClassType.CLASS;
     declare(stmt.name);
     define(stmt.name);
+    if (stmt.superClass != null) {
+      currentClass = ClassType.SUBCLASS;
+      if (stmt.name.lexeme.equals(stmt.superClass.name.lexeme)) {
+        Kumquat.error(stmt.superClass.name, "A class cannot inherit from itself.");
+      }
+      resolve(stmt.superClass);
+      beginScope();
+      scopes.peek().put("super", true);
+    }
     beginScope();
     scopes.peek().put("this", true);
     for (Stmt.Function method : stmt.methods) {
@@ -187,6 +208,7 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
       resolveFunction(method, declaration);
     }
     endScope();
+    if (stmt.superClass != null) endScope();
     currentClass = enclosingClass;
     return null;
   }
