@@ -1,3 +1,0 @@
-class HelloWorld:
-    fun main(args):
-        print("hello world") 
