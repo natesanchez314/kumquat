@@ -66,7 +66,7 @@ static Token errorToken(const char* msg) {
 	Token token;
 	token.type = TOKEN_ERROR;
 	token.start = msg;
-	token.length = (int)strLen(msg);
+	token.length = (int)strlen(msg);
 	token.line = scanner.line;
 	return token;
 }
