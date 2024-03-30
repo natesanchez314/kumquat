@@ -158,7 +158,7 @@ static Token string() {
 	}
 	if (isAtEnd()) return errorToken("Unterminated string.");
 	advance();
-	return makeToken(identifierType());
+	return makeToken(TOKEN_STRING);
 }
 
 Token scanToken() {

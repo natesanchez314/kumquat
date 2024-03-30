@@ -37,4 +37,4 @@ typedef struct {
 void initScanner(const char* source);
 Token scanToken();
 
-#endif
+#endif // !ckumquat_scanner_h
